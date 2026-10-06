@@ -37,10 +37,11 @@ class Utilisateur(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def generer_user_id(self):
+    @classmethod
+    def generer_user_id(cls):
         prefixe = f"{timezone.now().year % 100:02d}user"
         dernier = (
-            Utilisateur.objects.filter(user_id__startswith=prefixe)
+            cls.objects.filter(user_id__startswith=prefixe)
             .order_by("-user_id")
             .values_list("user_id", flat=True)
             .first()
