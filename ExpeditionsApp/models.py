@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from EntreprisesApp.models import Entreprise
 
@@ -27,3 +28,10 @@ class Expedition(models.Model):
         on_delete=models.CASCADE,
         related_name="expedition",
     )
+
+    def clean(self):
+        super().clean()
+        if self.entreprise_id and self.entreprise.type_entreprise != "chargeur":
+            raise ValidationError(
+                {"entreprise": "L'expedition doit appartenir a une entreprise de type expediteur."}
+            )
