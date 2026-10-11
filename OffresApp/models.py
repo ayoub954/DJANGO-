@@ -56,6 +56,18 @@ class Offre(models.Model):
             erreurs["vehicule"] = "Le vehicule doit appartenir au transporteur qui fait l'offre."
         if self.expedition_id and not self.pk and self.expedition.statut != "publiee":
             erreurs["expedition"] = "On ne peut proposer une offre que sur une expedition publiee."
+        if self.vehicule_id and not self.pk and not self.vehicule.disponible:
+            erreurs["vehicule"] = "Ce vehicule n'est pas disponible pour une nouvelle offre."
+        if (
+            self.vehicule_id
+            and self.expedition_id
+            and not self.vehicule.peut_transporter(self.expedition.poids_kg)
+        ):
+            erreurs["vehicule"] = (
+                f"Le vehicule ({self.vehicule.get_type_vehicule_display()}, "
+                f"{min(self.vehicule.capacite_kg, self.vehicule.capacite_max_type())} kg max) "
+                f"ne peut pas transporter {self.expedition.poids_kg} kg."
+            )
         if (
             self.expedition_id
             and self.transporteur_id
