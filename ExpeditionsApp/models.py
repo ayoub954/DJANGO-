@@ -73,10 +73,14 @@ class Expedition(models.Model):
         super().clean()
         if self.entreprise_id and self.entreprise.type_entreprise != "chargeur":
             raise ValidationError(
-                {"entreprise": "L'expedition doit appartenir a une entreprise de type expediteur."}
+                {"entreprise": "L'expedition doit appartenir a une entreprise de type chargeur."}
             )
 
     def save(self, *args, **kwargs):
         if not self.reference:
             self.reference = self.generer_reference()
+        self.full_clean()
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.reference} ({self.ville_depart} -> {self.ville_arrivee})"
