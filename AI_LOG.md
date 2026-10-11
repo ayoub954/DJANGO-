@@ -27,6 +27,25 @@
 - **Remarque complémentaire :** `vehicule` avait `null=True`, or le CDC dit qu'une offre est proposée « en l'associant à l'un de ses véhicules » → champ rendu obligatoire, avec `on_delete=PROTECT` (on ne supprime pas un véhicule qui a des offres). `STATUT_CHOICES` n'était pas défini → remplacé par `models.TextChoices`. Ajout de `created_at` / `updated_at` (obligatoires pour tous les modèles).
 - **Correction apportée et justification :** voir `OffresApp/models.py`. Test réalisé : création de 2 offres, acceptation de la 1ʳᵉ → expédition `attribuee`, 2ᵉ offre `refusee`, véhicule indisponible.
 
+## Entrée 2026-10-11 — Règles métier (section IV)
+- **Outil IA utilisé :** Claude (Anthropic)
+- **Prompt :** « Implémente les règles métier de la section IV dans les modèles. »
+- **Constat :** règles 1 à 5 déjà présentes dans `Offre.clean()` / `Offre.save()`. Manquaient les règles 6 et 7.
+- **Corrections apportées et justification :**
+
+| Règle | Où | Implémentation |
+|---|---|---|
+| 1. Offre créée uniquement par un transporteur | `Offre.clean()` | `transporteur.type_entreprise == "transporteur"` |
+| 2. Véhicule du même transporteur | `Offre.clean()` | `vehicule.entreprise_id == transporteur_id` |
+| 3. Offre seulement sur expédition `publiee` | `Offre.clean()` | vérifié à la création (`not self.pk`) |
+| 4. Une seule offre `proposee` par entreprise/expédition | `Offre.clean()` + `UniqueConstraint` conditionnelle | double garde : code + base |
+| 5. Cascade à l'acceptation | `Offre.save()` | `transaction.atomic()` : expédition → `attribuee`, autres offres → `refusee` |
+| 6. Véhicule `disponible=False` non proposable | `Offre.clean()` | vérifié à la création seulement (sinon la ré-sauvegarde d'une offre acceptée échouerait) |
+| 7. Compatibilité type de véhicule / poids | `Vehicule.CAPACITES_KG`, `Vehicule.clean()`, `Offre.clean()` | capacité cohérente avec le type ; poids de l'expédition ≤ min(capacité, max du type) |
+
+- **Autres corrections :** `full_clean()` appelé dans `Vehicule.save()` et `Expedition.save()` (les validateurs ne s'exécutent pas automatiquement à la sauvegarde) ; message d'erreur « expediteur » → « chargeur » ; `related_name="entrprise"` → `"entreprise"` ; ajout de `__str__`.
+- **Tests :** `OffresApp/tests.py` — un test par règle (8 tests, tous OK).
+
 ## Commits correspondants
 ```
 AI: génération initiale des modèles (Utilisateur, Entreprise, Vehicule, Expedition, Offre)
