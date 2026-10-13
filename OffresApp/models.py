@@ -49,40 +49,53 @@ class Offre(models.Model):
 
     def clean(self):
         super().clean()
-        erreurs = {}
+        is_new = self.pk is None
+
+        # Regle 1 : seule une entreprise transporteur peut proposer une offre
         if self.transporteur_id and self.transporteur.type_entreprise != "transporteur":
-            erreurs["transporteur"] = "L'offre doit etre proposee par une entreprise de type transporteur."
+            raise ValidationError({"transporteur": "L'offre doit etre proposee par une entreprise de type transporteur."})
+
+        # Regle 2 : le vehicule appartient au transporteur
         if self.vehicule_id and self.transporteur_id and self.vehicule.entreprise_id != self.transporteur_id:
-            erreurs["vehicule"] = "Le vehicule doit appartenir au transporteur qui fait l'offre."
-        if self.expedition_id and not self.pk and self.expedition.statut != "publiee":
-            erreurs["expedition"] = "On ne peut proposer une offre que sur une expedition publiee."
-        if self.vehicule_id and not self.pk and not self.vehicule.disponible:
-            erreurs["vehicule"] = "Ce vehicule n'est pas disponible pour une nouvelle offre."
-        if (
-            self.vehicule_id
-            and self.expedition_id
-            and not self.vehicule.peut_transporter(self.expedition.poids_kg)
-        ):
-            erreurs["vehicule"] = (
-                f"Le vehicule ({self.vehicule.get_type_vehicule_display()}, "
-                f"{min(self.vehicule.capacite_kg, self.vehicule.capacite_max_type())} kg max) "
-                f"ne peut pas transporter {self.expedition.poids_kg} kg."
-            )
-        if (
-            self.expedition_id
-            and self.transporteur_id
-            and self.statut == self.Statut.PROPOSEE
-            and Offre.objects.filter(
+            raise ValidationError({"vehicule": "Le vehicule doit appartenir au transporteur qui fait l'offre."})
+
+        # Regle 3 : offre uniquement sur une expedition publiee
+        if is_new and self.expedition_id:
+            exp_statut = (self.expedition.statut or "").lower()
+            if exp_statut not in ["publiée", "publiee"]:
+                raise ValidationError({"expedition": "On ne peut proposer une offre que sur une expedition publiee."})
+
+        # Regle 4 : une seule offre proposee par entreprise et par expedition
+        if self.expedition_id and self.transporteur_id and self.statut in ["proposée", "proposee"]:
+            existing_offres = Offre.objects.filter(
                 expedition_id=self.expedition_id,
                 transporteur_id=self.transporteur_id,
-                statut=self.Statut.PROPOSEE,
+                statut__in=["proposée", "proposee"],
             )
-            .exclude(pk=self.pk)
-            .exists()
-        ):
-            erreurs["transporteur"] = "Cette entreprise a deja une offre proposee sur cette expedition."
-        if erreurs:
-            raise ValidationError(erreurs)
+            if self.pk:
+                existing_offres = existing_offres.exclude(pk=self.pk)
+            if existing_offres.exists():
+                raise ValidationError("Cette entreprise a deja une offre proposee sur cette expedition.")
+
+        # Regle 6 : vehicule disponible
+        if self.vehicule_id:
+            if is_new and not self.vehicule.disponible:
+                raise ValidationError({"vehicule": "Ce vehicule n'est pas disponible pour une nouvelle offre."})
+            elif not is_new and not self.vehicule.disponible:
+                old = Offre.objects.filter(pk=self.pk).first()
+                if old and old.vehicule_id != self.vehicule_id:
+                    raise ValidationError({"vehicule": "Ce vehicule n'est pas disponible, on ne peut pas l'affecter a l'offre."})
+
+        # Regle 7 : poids de l'expedition compatible avec le vehicule
+        if self.vehicule_id and self.expedition_id and self.expedition.poids_kg:
+            poids = Decimal(str(self.expedition.poids_kg))
+            type_v = self.vehicule.type_vehicule
+            capacite_max = min(self.vehicule.capacite_kg, Vehicule.CAPACITES_KG[type_v][1])
+            if poids > capacite_max:
+                raise ValidationError({"vehicule": (
+                    f"Le vehicule ({self.vehicule.get_type_vehicule_display()}, {capacite_max} kg max) "
+                    f"ne peut pas transporter {poids} kg."
+                )})
 
     def save(self, *args, **kwargs):
         self.full_clean()
