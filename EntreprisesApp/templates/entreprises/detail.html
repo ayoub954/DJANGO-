@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ entreprise.raison_sociale }}{% endblock %}
+
+{% block content %}
+<p><a href="{% url 'entreprises:liste' %}">← Retour à la liste</a></p>
+
+<h2>{{ entreprise.raison_sociale }}</h2>
+<table>
+    <tr><th>Type</th><td>{{ entreprise.type_entreprise|capfirst }}</td></tr>
+    <tr><th>Matricule fiscal</th><td>{{ entreprise.matricule_fiscal|upper }}</td></tr>
+    <tr><th>Adresse</th><td>{{ entreprise.adresse|linebreaksbr }}</td></tr>
+    <tr><th>Gérant</th><td>{{ entreprise.gerant.get_full_name|default:entreprise.gerant.username }} ({{ entreprise.gerant.email }})</td></tr>
+    <tr><th>Inscrite depuis</th><td>{{ entreprise.created_at|timesince }}</td></tr>
+</table>
+
+{% if entreprise.type_entreprise == "chargeur" %}
+<h3>Expéditions ({{ expeditions|length }})</h3>
+<ul>
+    {% for expedition in expeditions %}
+    <li>
+        <a href="{% url 'expeditions:detail' expedition.reference %}">{{ expedition.reference }}</a>
+        — {{ expedition.ville_depart }} → {{ expedition.ville_arrivee }} ({{ expedition.get_statut_display }})
+    </li>
+    {% empty %}
+    <li>Aucune expédition publiée.</li>
+    {% endfor %}
+</ul>
+{% else %}
+<h3>Véhicules ({{ vehicules|length }})</h3>
+<ul>
+    {% for vehicule in vehicules %}
+    <li>
+        <a href="{% url 'vehicules:detail' vehicule.pk %}">{{ vehicule.immatriculation }}</a>
+        — {{ vehicule.get_type_vehicule_display }}, {{ vehicule.disponible|yesno:"disponible,indisponible" }}
+    </li>
+    {% empty %}
+    <li>Aucun véhicule.</li>
+    {% endfor %}
+</ul>
+
+<h3>Offres ({{ offres|length }})</h3>
+<ul>
+    {% for offre in offres %}
+    <li>
+        <a href="{% url 'offres:detail' offre.pk %}">{{ offre.prix|floatformat:2 }} DT</a>
+        sur {{ offre.expedition.reference }} — {{ offre.get_statut_display|lower }}
+    </li>
+    {% empty %}
+    <li>Aucune offre proposée.</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

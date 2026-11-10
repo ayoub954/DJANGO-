@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Entreprises{% endblock %}
+
+{% block content %}
+<h2>Entreprises ({{ entreprises|length }})</h2>
+<table>
+    <tr><th>Raison sociale</th><th>Type</th><th>Matricule fiscal</th><th>Gérant</th></tr>
+    {% for entreprise in entreprises %}
+    <tr>
+        <td><a href="{% url 'entreprises:detail' entreprise.pk %}">{{ entreprise.raison_sociale }}</a></td>
+        <td>{{ entreprise.type_entreprise|capfirst }}</td>
+        <td>{{ entreprise.matricule_fiscal|upper }}</td>
+        <td>{{ entreprise.gerant.get_full_name|default:entreprise.gerant.username }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">Aucune entreprise enregistrée.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

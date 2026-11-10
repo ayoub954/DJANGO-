@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Véhicules{% endblock %}
+
+{% block content %}
+<h2>Flotte de véhicules ({{ vehicules|length }})</h2>
+<table>
+    <tr><th>Immatriculation</th><th>Type</th><th>Capacité</th><th>Disponible</th><th>Transporteur</th></tr>
+    {% for vehicule in vehicules %}
+    <tr>
+        <td><a href="{% url 'vehicules:detail' vehicule.pk %}">{{ vehicule.immatriculation|upper }}</a></td>
+        <td>{{ vehicule.get_type_vehicule_display }}</td>
+        <td>{{ vehicule.capacite_kg|floatformat:0 }} kg</td>
+        <td>{{ vehicule.disponible|yesno:"Oui,Non" }}</td>
+        <td>{{ vehicule.entreprise.raison_sociale }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">Aucun véhicule enregistré.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

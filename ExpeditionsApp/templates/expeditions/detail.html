@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Expédition {{ expedition.reference }}{% endblock %}
+
+{% block content %}
+<p><a href="{% url 'expeditions:liste' %}">← Retour à la liste</a></p>
+
+<h2>Expédition {{ expedition.reference }}</h2>
+<table>
+    <tr><th>Trajet</th><td>{{ expedition.ville_depart|title }} → {{ expedition.ville_arrivee|title }}</td></tr>
+    <tr><th>Poids</th><td>{{ expedition.poids_kg|floatformat:2 }} kg</td></tr>
+    <tr><th>Date souhaitée</th><td>{{ expedition.date_souhaitee|date:"l d F Y" }}</td></tr>
+    <tr><th>Statut</th><td>{{ expedition.get_statut_display|capfirst }}</td></tr>
+    <tr>
+        <th>Chargeur</th>
+        <td><a href="{% url 'entreprises:detail' expedition.entreprise.pk %}">{{ expedition.entreprise }}</a></td>
+    </tr>
+    <tr><th>Publiée</th><td>il y a {{ expedition.created_at|timesince }}</td></tr>
+    <tr><th>Description</th><td>{{ expedition.description|default:"—"|linebreaksbr }}</td></tr>
+</table>
+
+<h3>{{ offres|length }} offre{{ offres|length|pluralize }}</h3>
+<table>
+    <tr><th>Transporteur</th><th>Véhicule</th><th>Prix</th><th>Délai</th><th>Statut</th><th>Proposée le</th></tr>
+    {% for offre in offres %}
+    <tr>
+        <td>{{ offre.transporteur }}</td>
+        <td><a href="{% url 'vehicules:detail' offre.vehicule.pk %}">{{ offre.vehicule.immatriculation }}</a></td>
+        <td><a href="{% url 'offres:detail' offre.pk %}">{{ offre.prix|floatformat:2 }} DT</a></td>
+        <td>{{ offre.delai_jours }} jour{{ offre.delai_jours|pluralize }}</td>
+        <td>{{ offre.get_statut_display }}</td>
+        <td>{{ offre.date_proposition|date:"d/m/Y" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">Aucune offre reçue pour cette expédition.</td></tr>
+    {% endfor %}
+</table>
+
+<p><a href="{% url 'expeditions:supprimer' expedition.reference %}">Supprimer cette expédition</a></p>
+{% endblock %}

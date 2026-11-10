@@ -16,7 +16,8 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
+from django.views.generic import RedirectView
 
 admin.site.site_header = "TransConnect - Pilotage operations"
 admin.site.site_title = "TransConnect Admin"
@@ -24,4 +25,9 @@ admin.site.index_title = "Tableau de bord de l'equipe operations"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("expeditions/", include("ExpeditionsApp.urls")),
+    path("vehicules/", include("VehiculesApp.urls")),
+    path("offres/", include("OffresApp.urls")),
+    path("entreprises/", include("EntreprisesApp.urls")),
+    path("", RedirectView.as_view(pattern_name="expeditions:liste"), name="accueil"),
 ]

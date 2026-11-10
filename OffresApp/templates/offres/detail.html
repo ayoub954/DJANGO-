@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Offre #{{ offre.pk }}{% endblock %}
+
+{% block content %}
+<p><a href="{% url 'offres:liste' %}">← Retour à la liste</a></p>
+
+<h2>Offre #{{ offre.pk }} — {{ offre.get_statut_display|capfirst }}</h2>
+<table>
+    <tr>
+        <th>Expédition</th>
+        <td>
+            <a href="{% url 'expeditions:detail' offre.expedition.reference %}">{{ offre.expedition.reference }}</a>
+            ({{ offre.expedition.ville_depart }} → {{ offre.expedition.ville_arrivee }})
+        </td>
+    </tr>
+    <tr>
+        <th>Transporteur</th>
+        <td><a href="{% url 'entreprises:detail' offre.transporteur.pk %}">{{ offre.transporteur }}</a></td>
+    </tr>
+    <tr>
+        <th>Véhicule</th>
+        <td><a href="{% url 'vehicules:detail' offre.vehicule.pk %}">{{ offre.vehicule }}</a></td>
+    </tr>
+    <tr><th>Prix</th><td>{{ offre.prix|floatformat:2 }} DT</td></tr>
+    <tr><th>Délai</th><td>{{ offre.delai_jours }} jour{{ offre.delai_jours|pluralize }}</td></tr>
+    <tr><th>Proposée le</th><td>{{ offre.date_proposition|date:"d/m/Y" }} (il y a {{ offre.created_at|timesince }})</td></tr>
+</table>
+
+<p><a href="{% url 'offres:supprimer' offre.pk %}">Supprimer cette offre</a></p>
+{% endblock %}

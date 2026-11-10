@@ -56,3 +56,13 @@ Review: effets en cascade dans Offre.save() (AI_LOG Bug Hunt #4)
 Feat: AUTH_USER_MODEL + nom de base de données
 Docs: ajout AI_LOG.md
 ```
+
+## Entrée 2026-11-10 — Workshop Views (1/2) : FBV, URLs & Templates
+- **Outil IA utilisé :** Claude (Anthropic)
+- **Prompt :** « Fais la partie views / urls du workshop Views 1/2 (liste, détail, suppression protégée en FBV pour Expedition, Vehicule, Offre, + Entreprise). »
+- **Sortie obtenue (résumé) :** un `urls.py` par app avec `app_name` et routes nommées, inclus depuis `config/urls.py` ; FBV liste / détail (`render`, `get_object_or_404`, `select_related`) ; `templates/base.html` avec navigation `{% url %}` hérité par tous les templates.
+- **Action GET dangereuse identifiée et corrigée :** une vue de suppression accessible en GET (lien cliquable, préchargement navigateur, robot d'indexation) supprimerait des données sans confirmation.
+  - Correction : `@require_http_methods(["GET", "POST"])` — GET affiche une page de confirmation, seul un POST (formulaire avec `{% csrf_token %}`) supprime. Toute autre méthode → 405.
+  - `Vehicule` : `Offre.vehicule` est en `on_delete=PROTECT` → `ProtectedError` intercepté, message d'erreur et redirection vers le détail au lieu d'une erreur 500.
+- **Écarts vs énoncé :** `expedition.offres` utilisé au lieu de `offre_set` (le modèle déclare `related_name="offres"`). Routes Vehicule / Offre / Entreprise par `pk` (pas de champ lisible unique équivalent à `reference`).
+- **Vérification :** `manage.py check` OK ; toutes les pages renvoient 200, référence / pk inexistant → 404, PUT sur une suppression → 405, POST de suppression d'un véhicule lié à une offre → refusé avec message.

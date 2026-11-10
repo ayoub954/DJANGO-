@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des expeditions</title>
+</head>
+<body>
+    <h1>Liste des expeditions</h1>
+    <table border="1">
+        <tr>
+            <th>Reference</th>
+            <th>Depart</th>
+            <th>Arrivee</th>
+            <th>Poids (kg)</th>
+            <th>Date souhaitee</th>
+            <th>Statut</th>
+            <th>Entreprise</th>
+        </tr>
+        {% for expedition in list %}
+        <tr>
+            <td>{{ expedition.reference }}</td>
+            <td>{{ expedition.ville_depart }}</td>
+            <td>{{ expedition.ville_arrivee }}</td>
+            <td>{{ expedition.poids_kg }}</td>
+            <td>{{ expedition.date_souhaitee }}</td>
+            <td>{{ expedition.statut }}</td>
+            <td>{{ expedition.entreprise }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">Aucune expedition.</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

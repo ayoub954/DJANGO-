@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Supprimer {{ vehicule.immatriculation }}{% endblock %}
+
+{% block content %}
+<h2>Supprimer le véhicule {{ vehicule.immatriculation }} ?</h2>
+<p>La suppression est refusée si le véhicule est utilisé dans au moins une offre.</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn-danger">Confirmer la suppression</button>
+    <a href="{% url 'vehicules:detail' vehicule.pk %}">Annuler</a>
+</form>
+{% endblock %}
