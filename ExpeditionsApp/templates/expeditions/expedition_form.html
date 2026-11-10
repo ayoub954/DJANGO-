@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}{% if expedition %}Modifier {{ expedition.reference }}{% else %}Nouvelle expédition{% endif %}{% endblock %}
+
+{% block content %}
+{% if expedition %}
+<h2>Modifier l'expédition {{ expedition.reference }}</h2>
+{% else %}
+<h2>Nouvelle expédition</h2>
+{% endif %}
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{% if expedition %}Enregistrer{% else %}Créer{% endif %}</button>
+    <a href="{% url 'expedition_list' %}">Annuler</a>
+</form>
+{% endblock %}

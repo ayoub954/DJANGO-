@@ -3,8 +3,9 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse_lazy
-from django.views.generic import DeleteView, DetailView, ListView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
+from .forms import ExpeditionForm
 from .models import Expedition
 
 
@@ -59,11 +60,11 @@ class Expedition_list(ListView):
     model = Expedition
     template_name = "expeditions/liste.html"
     context_object_name = "expeditions"
+    extra_context = {"titre": "Toutes les expéditions"}
 
     def get_queryset(self):
         return (
             Expedition.objects
-            .filter(statut="publiee")
             .select_related("entreprise")
             .order_by("-created_at")
         )
@@ -89,4 +90,29 @@ class ExpeditionDeleteView(DeleteView):
         reference = self.object.reference
         response = super().form_valid(form)
         messages.success(self.request, f"Expedition {reference} supprimee.")
+        return response
+
+
+class ExpeditionCreateView(CreateView):
+    model = Expedition
+    form_class = ExpeditionForm
+    template_name = "expeditions/expedition_form.html"
+    success_url = reverse_lazy("expedition_list")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f"Expedition {self.object.reference} creee avec succes.")
+        return response
+
+
+class ExpeditionUpdateView(UpdateView):
+    model = Expedition
+    form_class = ExpeditionForm
+    template_name = "expeditions/expedition_form.html"
+    context_object_name = "expedition"
+    success_url = reverse_lazy("expedition_list")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f"Expedition {self.object.reference} modifiee avec succes.")
         return response

@@ -36,5 +36,8 @@
     {% endfor %}
 </table>
 
-<p><a href="{% url 'expedition_delete' expedition.pk %}">Supprimer cette expédition</a></p>
+<p>
+    <a href="{% url 'expedition_update' expedition.pk %}">Modifier cette expédition</a> |
+    <a href="{% url 'expedition_delete' expedition.pk %}">Supprimer cette expédition</a>
+</p>
 {% endblock %}

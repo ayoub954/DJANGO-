@@ -7,7 +7,9 @@ urlpatterns = [
     path('list/', list_expeditions, name='list'),
     path('expedition/<int:pk>/', expedition_detail, name='expedition_detail'),
     path('expedition/<int:pk>/delete/', expedition_delete, name='expedition_delete'),
+    path('expedition/create/', ExpeditionCreateView.as_view(), name='expedition_create'),
     path('expedition_list/', Expedition_list.as_view(), name='expedition_list'),
     path('expedition_detail/<int:pk>/', ExpeditionDetailView.as_view(), name='expedition_detail_cbv'),
     path('expedition_delete/<int:pk>/', ExpeditionDeleteView.as_view(), name='expedition_delete_cbv'),
+    path('expedition/<int:pk>/update/', ExpeditionUpdateView.as_view(), name='expedition_update'),
 ]

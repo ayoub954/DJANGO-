@@ -3,7 +3,7 @@
 {% block title %}Expéditions disponibles{% endblock %}
 
 {% block content %}
-<h2>Expéditions publiées ({{ expeditions|length }})</h2>
+<h2>{{ titre|default:"Expéditions publiées" }} ({{ expeditions|length }})</h2>
 <ul>
     {% for expedition in expeditions %}
     <li>
@@ -12,6 +12,7 @@
         ({{ expedition.poids_kg|floatformat:0 }} kg,
         souhaitée le {{ expedition.date_souhaitee|date:"d/m/Y" }})
         — {{ expedition.entreprise.raison_sociale|upper }}
+        — <strong>{{ expedition.get_statut_display }}</strong>
         <br>
         <small>{{ expedition.description|default:"Aucune description fournie."|truncatewords:15 }}</small>
     </li>
