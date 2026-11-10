@@ -2,7 +2,8 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
-from django.views.generic import ListView
+from django.urls import reverse_lazy
+from django.views.generic import DeleteView, DetailView, ListView
 
 from .models import Expedition
 
@@ -66,3 +67,26 @@ class Expedition_list(ListView):
             .select_related("entreprise")
             .order_by("-created_at")
         )
+
+
+class ExpeditionDetailView(DetailView):
+    model = Expedition
+    template_name = "expeditions/detail.html"
+    context_object_name = "expedition"
+
+    def get_queryset(self):
+        return Expedition.objects.select_related("entreprise")
+
+
+class ExpeditionDeleteView(DeleteView):
+    
+    model = Expedition
+    template_name = "expeditions/confirmer_suppression.html"
+    context_object_name = "expedition"
+    success_url = reverse_lazy("expedition_list")
+
+    def form_valid(self, form):
+        reference = self.object.reference
+        response = super().form_valid(form)
+        messages.success(self.request, f"Expedition {reference} supprimee.")
+        return response
