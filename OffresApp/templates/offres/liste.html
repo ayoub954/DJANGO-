@@ -8,7 +8,7 @@
     <tr><th>Expédition</th><th>Transporteur</th><th>Véhicule</th><th>Prix</th><th>Délai</th><th>Statut</th><th>Date</th></tr>
     {% for offre in offres %}
     <tr>
-        <td><a href="{% url 'expeditions:detail' offre.expedition.reference %}">{{ offre.expedition.reference }}</a></td>
+        <td><a href="{% url 'expedition_detail' offre.expedition.pk %}">{{ offre.expedition.reference }}</a></td>
         <td>{{ offre.transporteur.raison_sociale }}</td>
         <td>{{ offre.vehicule.immatriculation }}</td>
         <td><a href="{% url 'offres:detail' offre.pk %}">{{ offre.prix|floatformat:2 }} DT</a></td>

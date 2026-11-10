@@ -19,7 +19,7 @@
 <ul>
     {% for expedition in expeditions %}
     <li>
-        <a href="{% url 'expeditions:detail' expedition.reference %}">{{ expedition.reference }}</a>
+        <a href="{% url 'expedition_detail' expedition.pk %}">{{ expedition.reference }}</a>
         — {{ expedition.ville_depart }} → {{ expedition.ville_arrivee }} ({{ expedition.get_statut_display }})
     </li>
     {% empty %}

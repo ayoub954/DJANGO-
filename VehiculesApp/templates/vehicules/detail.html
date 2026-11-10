@@ -22,7 +22,7 @@
     {% for offre in offres %}
     <li>
         <a href="{% url 'offres:detail' offre.pk %}">{{ offre.prix|floatformat:2 }} DT</a>
-        sur <a href="{% url 'expeditions:detail' offre.expedition.reference %}">{{ offre.expedition.reference }}</a>
+        sur <a href="{% url 'expedition_detail' offre.expedition.pk %}">{{ offre.expedition.reference }}</a>
         — {{ offre.get_statut_display|lower }}
     </li>
     {% empty %}

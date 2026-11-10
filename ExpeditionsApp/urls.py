@@ -1,13 +1,11 @@
 from django.urls import path
-
-from . import views
-
-app_name = "expeditions"
+from .views import *
 
 urlpatterns = [
-    path("", views.liste_expeditions, name="liste"),
-    path("home/", views.home, name="home"),
-    path("welcome/<str:name>/", views.welcome, name="welcome"),
-    path("<str:reference>/", views.detail_expedition, name="detail"),
-    path("<str:reference>/supprimer/", views.supprimer_expedition, name="supprimer"),
+    path('home/', home, name='home'),
+    path('welcome/<str:name>/', welcome, name='ahmed'),
+    path('list/', list_expeditions, name='list'),
+    path('expedition/<int:pk>/', expedition_detail, name='expedition_detail'),
+    path('expedition/<int:pk>/delete/', expedition_delete, name='expedition_delete'),
+    path('expedition_list/', Expedition_list.as_view(), name='expedition_list'),
 ]

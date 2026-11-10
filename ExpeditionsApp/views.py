@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
+from django.views.generic import ListView
 
 from .models import Expedition
 
@@ -14,7 +15,7 @@ def welcome(request, name):
     return HttpResponse(f"Bienvenue {name} !")
 
 
-def liste_expeditions(request):
+def list_expeditions(request):
     expeditions = (
         Expedition.objects
         .filter(statut="publiee")
@@ -24,9 +25,9 @@ def liste_expeditions(request):
     return render(request, "expeditions/liste.html", {"expeditions": expeditions})
 
 
-def detail_expedition(request, reference):
+def expedition_detail(request, pk):
     expedition = get_object_or_404(
-        Expedition.objects.select_related("entreprise"), reference=reference
+        Expedition.objects.select_related("entreprise"), pk=pk
     )
     offres = (
         expedition.offres
@@ -41,12 +42,27 @@ def detail_expedition(request, reference):
 
 
 @require_http_methods(["GET", "POST"])
-def supprimer_expedition(request, reference):
+def expedition_delete(request, pk):
     """GET : page de confirmation. POST : suppression effective.
     Une suppression ne doit jamais etre declenchee par un simple GET (lien, robot, prefetch)."""
-    expedition = get_object_or_404(Expedition, reference=reference)
+    expedition = get_object_or_404(Expedition, pk=pk)
     if request.method == "POST":
+        reference = expedition.reference
         expedition.delete()
         messages.success(request, f"Expedition {reference} supprimee.")
-        return redirect("expeditions:liste")
+        return redirect("list")
     return render(request, "expeditions/confirmer_suppression.html", {"expedition": expedition})
+
+
+class Expedition_list(ListView):
+    model = Expedition
+    template_name = "expeditions/liste.html"
+    context_object_name = "expeditions"
+
+    def get_queryset(self):
+        return (
+            Expedition.objects
+            .filter(statut="publiee")
+            .select_related("entreprise")
+            .order_by("-created_at")
+        )

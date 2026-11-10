@@ -7,7 +7,7 @@
 <ul>
     {% for expedition in expeditions %}
     <li>
-        <a href="{% url 'expeditions:detail' expedition.reference %}">{{ expedition.reference }}</a>
+        <a href="{% url 'expedition_detail' expedition.pk %}">{{ expedition.reference }}</a>
         — {{ expedition.ville_depart|title }} → {{ expedition.ville_arrivee|title }}
         ({{ expedition.poids_kg|floatformat:0 }} kg,
         souhaitée le {{ expedition.date_souhaitee|date:"d/m/Y" }})

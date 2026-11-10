@@ -29,5 +29,5 @@ urlpatterns = [
     path("vehicules/", include("VehiculesApp.urls")),
     path("offres/", include("OffresApp.urls")),
     path("entreprises/", include("EntreprisesApp.urls")),
-    path("", RedirectView.as_view(pattern_name="expeditions:liste"), name="accueil"),
+    path("", RedirectView.as_view(pattern_name="list"), name="accueil"),
 ]

@@ -10,7 +10,7 @@
     <tr>
         <th>Expédition</th>
         <td>
-            <a href="{% url 'expeditions:detail' offre.expedition.reference %}">{{ offre.expedition.reference }}</a>
+            <a href="{% url 'expedition_detail' offre.expedition.pk %}">{{ offre.expedition.reference }}</a>
             ({{ offre.expedition.ville_depart }} → {{ offre.expedition.ville_arrivee }})
         </td>
     </tr>

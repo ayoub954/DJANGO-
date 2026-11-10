@@ -3,7 +3,7 @@
 {% block title %}Expédition {{ expedition.reference }}{% endblock %}
 
 {% block content %}
-<p><a href="{% url 'expeditions:liste' %}">← Retour à la liste</a></p>
+<p><a href="{% url 'list' %}">← Retour à la liste</a></p>
 
 <h2>Expédition {{ expedition.reference }}</h2>
 <table>
@@ -36,5 +36,5 @@
     {% endfor %}
 </table>
 
-<p><a href="{% url 'expeditions:supprimer' expedition.reference %}">Supprimer cette expédition</a></p>
+<p><a href="{% url 'expedition_delete' expedition.pk %}">Supprimer cette expédition</a></p>
 {% endblock %}
