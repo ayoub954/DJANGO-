@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{% if offre %}Modifier{% else %}Ajouter{% endif %} une offre{% endblock %}
+
+{% block content %}
+<h2>{% if offre %}Modifier {{ offre }}{% else %}Ajouter une offre{% endif %}</h2>
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enregistrer</button>
+    <a href="{% url 'offres:liste' %}">Annuler</a>
+</form>
+{% endblock %}

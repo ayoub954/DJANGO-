@@ -51,4 +51,8 @@
     {% endfor %}
 </ul>
 {% endif %}
+<p>
+    <a href="{% url 'entreprises:modifier' entreprise.pk %}">Modifier cette entreprise</a> |
+    <a href="{% url 'entreprises:supprimer' entreprise.pk %}">Supprimer cette entreprise</a>
+</p>
 {% endblock %}

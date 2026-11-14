@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{% if vehicule %}Modifier{% else %}Ajouter{% endif %} un véhicule{% endblock %}
+
+{% block content %}
+<h2>{% if vehicule %}Modifier {{ vehicule }}{% else %}Ajouter un véhicule{% endif %}</h2>
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enregistrer</button>
+    <a href="{% url 'vehicules:liste' %}">Annuler</a>
+</form>
+{% endblock %}

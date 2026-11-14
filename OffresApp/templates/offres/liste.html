@@ -4,6 +4,7 @@
 
 {% block content %}
 <h2>{{ offres|length }} offre{{ offres|length|pluralize }}</h2>
+<p><a href="{% url 'offres:ajouter' %}">+ Ajouter une offre</a></p>
 <table>
     <tr><th>Expédition</th><th>Transporteur</th><th>Véhicule</th><th>Prix</th><th>Délai</th><th>Statut</th><th>Date</th></tr>
     {% for offre in offres %}

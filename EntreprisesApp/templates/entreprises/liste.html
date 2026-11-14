@@ -4,6 +4,7 @@
 
 {% block content %}
 <h2>Entreprises ({{ entreprises|length }})</h2>
+<p><a href="{% url 'entreprises:ajouter' %}">+ Ajouter une entreprise</a></p>
 <table>
     <tr><th>Raison sociale</th><th>Type</th><th>Matricule fiscal</th><th>Gérant</th></tr>
     {% for entreprise in entreprises %}

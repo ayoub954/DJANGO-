@@ -27,5 +27,8 @@
     <tr><th>Proposée le</th><td>{{ offre.date_proposition|date:"d/m/Y" }} (il y a {{ offre.created_at|timesince }})</td></tr>
 </table>
 
-<p><a href="{% url 'offres:supprimer' offre.pk %}">Supprimer cette offre</a></p>
+<p>
+    <a href="{% url 'offres:modifier' offre.pk %}">Modifier cette offre</a> |
+    <a href="{% url 'offres:supprimer' offre.pk %}">Supprimer cette offre</a>
+</p>
 {% endblock %}

@@ -4,6 +4,7 @@
 
 {% block content %}
 <h2>Flotte de véhicules ({{ vehicules|length }})</h2>
+<p><a href="{% url 'vehicules:ajouter' %}">+ Ajouter un véhicule</a></p>
 <table>
     <tr><th>Immatriculation</th><th>Type</th><th>Capacité</th><th>Disponible</th><th>Transporteur</th></tr>
     {% for vehicule in vehicules %}
