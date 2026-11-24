@@ -27,6 +27,15 @@
         <a href="{% url 'offres:liste' %}">Offres</a>
         <a href="{% url 'entreprises:liste' %}">Entreprises</a>
         <a href="{% url 'admin:index' %}">Admin</a>
+
+        {% if user.is_authenticated %}
+        <form action="{% url 'Logout' %}" method="post" style="margin:0">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+        {% else %}
+        <a href="{% url 'Login' %}">Login</a>
+        {% endif %}
     </nav>
     <main>
         {% if messages %}

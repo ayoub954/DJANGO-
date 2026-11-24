@@ -73,8 +73,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/6.1/ref/settings/#databases
+
 
 DATABASES = {
     "default": {
@@ -115,14 +114,14 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.1/howto/static-files/
+
+
 
 STATIC_URL = "static/"
 
 
-# Email
-# https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
+
+
 
 MAILERS = {
     "default": {
@@ -130,5 +129,11 @@ MAILERS = {
     },
 }
 
-# Modèle utilisateur personnalisé
+
 AUTH_USER_MODEL = "EntreprisesApp.Utilisateur"
+
+LOGIN_URL = 'Login'
+
+LOGIN_REDIRECT_URL = 'expedition_list'
+
+LOGOUT_REDIRECT_URL = 'Login'

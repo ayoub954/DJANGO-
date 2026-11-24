@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import EntrepriseForm
+from .forms import EntrepriseForm, InscriptionForm
 from .models import Entreprise
 
 
@@ -47,3 +47,15 @@ def supprimer_entreprise(request, pk):
         messages.success(request, "Entreprise supprimee.")
         return redirect("entreprises:liste")
     return render(request, "entreprises/confirmer_suppression.html", {"entreprise": entreprise})
+
+
+def inscriptionView (request):
+    if request.method == 'POST':
+        form = InscriptionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect ('Login')
+        
+    else:
+        form = InscriptionForm()
+    return render(request, 'inscription.html', {'form': form})

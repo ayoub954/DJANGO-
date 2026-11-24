@@ -16,6 +16,8 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.contrib.auth.views import LoginView, LogoutView
+from EntreprisesApp.views import inscriptionView
 from django.urls import include, path
 from django.views.generic import RedirectView
 
@@ -29,5 +31,8 @@ urlpatterns = [
     path("vehicules/", include("VehiculesApp.urls")),
     path("offres/", include("OffresApp.urls")),
     path("entreprises/", include("EntreprisesApp.urls")),
+    path("login/", LoginView.as_view(template_name="login.html"), name="Login"),
+    path("logout/", LogoutView.as_view(next_page="Login"), name="Logout"),
+    path('inscription/', inscriptionView , name='inscription'),
     path("", RedirectView.as_view(pattern_name="list"), name="accueil"),
 ]
